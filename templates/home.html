@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XrayVision AI</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif; /* Font fallbacks */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden; /* Prevent scrollbars */
+        background-image: url('../static/background.png');
+        background-repeat: no-repeat; /* Prevent the background image from repeating */
+        background-size: 100%; /* Scale the background image to 80% of its original size */
+        background-position: center; /* Center the background image */
+    }
+
+    nav {
+        background-color: #06003C;
+        padding: 20px 0;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        z-index: 1000; /* Ensure the navigation bar is above other content */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    nav ul li {
+        margin: 0 10px;
+        font-size: 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+       background-color: #0B006D;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 800px;
+        text-align: center;
+        margin-top: 120px;
+    }
+    .welcome-text {
+        margin-bottom: 20px;
+    }
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    .search-box {
+        padding: 10px;
+        width: 70%;
+        border: 2px solid black; /* Initial border style */
+        border-radius: 5px;
+    }
+
+    .search-box:focus {
+        border: 2px solid black; /* Border style on focus */
+        outline: none; /* Remove default outline */
+    }
+
+    .search-button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 2px;
+        border: 2px solid black;
+    }
+    .suggested-symptoms {
+        position: absolute;
+        width: calc(83.3%);
+        background-color: #fff;
+        border: 2px solid black;
+        border-radius: 5px;
+        z-index: 1;
+        top: calc(100% + 5px);
+        left: 0;
+        display: none;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    .suggested-symptoms ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .suggested-symptoms li {
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .suggested-symptoms li:hover {
+        background-color: #f4f4f4;
+    }
+    .selected-items {
+        margin-top: -5px;
+        text-align: left;
+    }
+    .selected-items ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .selected-items li {
+        margin-bottom: 5px;
+        border-radius: 5px;
+        background-color: #e0e0e0;
+        padding: 5px 10px;
+    }
+    .symptom-list {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: calc(78.3%);
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        height: 300px;
+        overflow-y: auto;
+        border: 2px solid black;
+    }
+    .symptom-title {
+        text-align: center;
+    }
+    .symptom-list ul {
+        padding: 0;
+        margin: 0;
+    }
+    .symptom-list li {
+        margin-bottom: 10px;
+        position: relative; /* Added for positioning the delete button */
+    }
+    .suggested-symptoms::-webkit-scrollbar {
+        width: 10px;
+        margin-left: -10px;
+    }
+
+    .suggested-symptoms::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+    .suggested-symptoms::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .suggested-symptoms::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .suggested-symptoms::-webkit-scrollbar-track:hover {
+        background: #ddd;
+    }
+
+    .suggested-symptoms::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    .suggested-symptoms::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    .delete-button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 50%; /* Make the button circular */
+    cursor: pointer;
+    padding: 0; /* Remove padding */
+    position: absolute;
+    right: 5px; /* Position the button on the right side */
+    top: 50%; /* Position the button in the center vertically */
+    transform: translateY(-50%); /* Adjust vertical alignment */
+    width: 20px;
+    height: 20px;
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+}
+
+/* Loading screen styles */
+#loadingScreen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    padding-top: 50vh;
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">AI Detections</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1 class="welcome-text">Welcome to XrayVision AI</h1>
+    <div class="search-container">
+        <input type="text" class="search-box" id="searchBox" placeholder="Enter patient's symptoms" oninput="showSuggestions()">
+        <div class="suggested-symptoms" id="suggestedSymptoms"></div>
+        <button class="search-button" onclick="searchSymptom()">Search</button>
+    </div>
+    <div class="selected-items" id="selectedItems">
+        <div class="symptom-list">
+            <ul id="symptomList"></ul>
+        </div>
+    </div>
+</div>
+
+<!-- Loading screen HTML -->
+<div id="loadingScreen">
+    Searching for Possible Diseases...
+</div>
+
+<script>
+   const symptoms = [
+    "Abdominal Distension",
+    "Abdominal Tenderness",
+    "Agitation",
+    "Anxiety",
+    "Bleeding Gums",
+    "Bloating",
+    "Blood in Stool",
+    "Blood in Urine",
+    "Bloodshot Eyes",
+    "Body Aches",
+    "Breast Tenderness",
+    "Brittle Nails",
+    "Changes in Bowel Habits",
+    "Changes in Menstrual Cycle",
+    "Confusion in Mental Awareness",
+    "Chest Pain",
+    "Chest Tightness",
+    "Chills",
+    "Clammy Skin",
+    "Clumsiness",
+    "Cold Hands and Feet",
+    "Cold Intolerance",
+    "Confusion",
+    "Constipation",
+    "Cough",
+    "Depression",
+    "Diarrhea",
+    "Difficulty Breathing",
+    "Difficulty Speaking",
+    "Double Vision",
+    "Drooling",
+    "Dry Cough",
+    "Dry Eyes",
+    "Dry Mouth",
+    "Earache",
+    "Excessive Hunger",
+    "Excessive Sweating",
+    "Excessive Thirst",
+    "Excessive Urination",
+    "Exhaustion",
+    "Eye Redness",
+    "Fainting",
+    "Fast Heartbeat",
+    "Fatigue",
+    "Feeling Cold",
+    "Feeling Hot",
+    "Feeling Lightheaded",
+    "Feeling Nauseous",
+    "Fever",
+    "Flatulence",
+    "Fluttering in Chest",
+    "Foamy Urine",
+    "Forgetfulness",
+    "Gagging",
+    "Gas",
+    "Hair Loss",
+    "Hair Thinning",
+    "Hallucinations",
+    "Hand Tremors",
+    "Headache",
+    "Heartburn",
+    "Heavy Menstrual Bleeding",
+    "Hoarse Voice",
+    "Hot Flashes",
+    "Hypersensitivity to Light",
+    "Increased Appetite",
+    "Increased Heart Rate",
+    "Increased Thirst",
+    "Increased Urination at Night",
+    "Indigestion",
+    "Involuntary Muscle Twitching",
+    "Itchy Eyes",
+    "Itchy Skin",
+    "Joint Pain",
+    "Jaw Pain",
+    "Leg Cramps",
+    "Leg Swelling",
+    "Light Sensitivity",
+    "Loss of Appetite",
+    "Loss of Balance",
+    "Loss of Coordination",
+    "Loss of Taste or Smell",
+    "Low Back Pain",
+    "Low Libido",
+    "Low Urine Output",
+    "Memory Loss",
+    "Metallic Taste in Mouth",
+    "Mood Changes",
+    "Mouth Sores",
+    "Muscle Aches",
+    "Muscle Cramps",
+    "Muscle Pain",
+    "Muscle Weakness",
+    "Nasal Congestion",
+    "Nasal Discharge",
+    "Nausea",
+    "Night Sweats",
+    "Nightmares",
+    "Nocturia",
+    "Nosebleeds",
+    "Numbness or Tingling",
+    "Oily Skin",
+    "Pale Skin",
+    "Pallor",
+    "Panic Attacks",
+    "Paresthesia",
+    "Pelvic Pain",
+    "Phlegm Production",
+    "Poor Appetite",
+    "Poor Concentration",
+    "Poor Memory",
+    "Postnasal Drip",
+    "Puffy Eyes",
+    "Rapid Breathing",
+    "Rash",
+    "Rectal Bleeding",
+    "Red Eyes",
+    "Red Spots on Skin",
+    "Restlessness",
+    "Runny Nose",
+    "Sadness",
+    "Scalp Tenderness",
+    "Seizures",
+    "Sensitivity to Noise",
+    "Shivering",
+    "Shortness of Breath",
+    "Skin Discoloration",
+    "Skin Lesions",
+    "Skin Peeling",
+    "Skin Rash",
+    "Slurred Speech",
+    "Sneezing",
+    "Sore Throat",
+    "Stiffness",
+    "Stomach Bloating",
+    "Stomach Cramps",
+    "Stomach Pain",
+    "Stuffy Nose",
+    "Sweating",
+    "Sweaty Palms",
+    "Taste Changes",
+    "Teeth Grinding",
+    "Testicular Pain",
+    "Throat Clearing",
+    "Throat Tightness",
+    "Tingling Sensations",
+    "Toe Numbness",
+    "Tremors",
+    "Trouble Swallowing",
+    "Unexplained Weight Gain or Loss",
+    "Unsteady Gait",
+    "Upset Stomach",
+    "Urinary Problems",
+    "Urinary Retention",
+    "Urinary Urgency",
+    "Urinary Incontinence",
+    "Urinary Frequency",
+    "Vertigo",
+    "Visual Disturbances",
+    "Voice Changes",
+    "Vomiting",
+    "Watery Eyes",
+    "Weakness",
+    "Weight Gain",
+    "Weight Loss",
+    "Wheezing",
+    "Yellowing of Skin"
+];
+
+    function showSuggestions() {
+    const searchBox = document.getElementById('searchBox');
+    const searchTerm = searchBox.value.trim().toLowerCase();
+    const suggestedSymptomsElement = document.getElementById('suggestedSymptoms');
+
+    suggestedSymptomsElement.innerHTML = '';
+
+    const matchingSymptoms = symptoms.filter(symptom => symptom.toLowerCase().startsWith(searchTerm));
+
+    // Filter out the already selected symptoms
+    const selectedSymptoms = Array.from(document.querySelectorAll('#symptomList li')).map(li => li.textContent.toLowerCase());
+    const filteredSymptoms = matchingSymptoms.filter(symptom => !selectedSymptoms.includes(symptom.toLowerCase()));
+
+    filteredSymptoms.forEach(symptom => {
+        const listItem = document.createElement('div');
+        listItem.textContent = symptom;
+        listItem.addEventListener('click', function() {
+            selectSymptom(symptom);
+        });
+        suggestedSymptomsElement.appendChild(listItem);
+    });
+
+    // Calculate the left offset based on the width of the search box and button
+    const searchBoxRect = searchBox.getBoundingClientRect();
+    const searchButtonRect = document.querySelector('.search-button').getBoundingClientRect();
+
+    suggestedSymptomsElement.style.display = searchTerm ? 'block' : 'none';
+    suggestedSymptomsElement.style.left = '65px'; // Set the left offset
+
+    // Check if there are any suggestions, if not, set border to 0px
+    suggestedSymptomsElement.style.border = filteredSymptoms.length === 0 ? '0px' : '2px solid black';
+
+}
+
+function selectSymptom(symptom) {
+    console.log("Selected symptom:", symptom);
+    document.getElementById('searchBox').value = ''; // Clear the search box
+    document.getElementById('suggestedSymptoms').style.display = 'none';
+
+    // Remove the selected symptom from the symptoms array
+    const index = symptoms.indexOf(symptom);
+    if (index !== -1) {
+        symptoms.splice(index, 1);
+    }
+
+    // Add the selected symptom to the symptom-list
+    addToSymptomList(symptom);
+}
+
+function addToSymptomList(symptom) {
+    const ul = document.getElementById('symptomList');
+    const li = document.createElement('li');
+    li.textContent = symptom;
+
+    // Create delete button for each symptom item
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'x';
+    deleteButton.classList.add('delete-button');
+    deleteButton.onclick = function() {
+        deleteSymptom(symptom);
+    };
+
+    li.appendChild(deleteButton); // Append delete button to the symptom item
+
+    ul.appendChild(li);
+}
+
+function deleteSymptom(symptom) {
+    const symptomItem = document.querySelector('#symptomList li');
+    symptomItem.remove(); // Remove the symptom from the list
+
+    // Add the deleted symptom back to the symptoms array
+    symptoms.push(symptom);
+
+    // Add the deleted symptom back to the suggested symptoms
+    const suggestedSymptomsElement = document.getElementById('suggestedSymptoms');
+    const newItem = document.createElement('div');
+    newItem.textContent = symptom;
+    newItem.addEventListener('click', function() {
+        selectSymptom(symptom);
+    });
+    suggestedSymptomsElement.appendChild(newItem);
+}
+
+
+function searchSymptom() {
+    const searchBox = document.getElementById('searchBox');
+    const searchTerm = searchBox.value.toLowerCase();
+    addToSelected(searchTerm);
+    // Perform search or other actions here
+    console.log("Searching for symptom:", searchTerm);
+}
+
+function simulateLoading() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    loadingScreen.style.display = 'block';
+
+    // Construct the list of diseases and percentages
+    const diseases = [
+        {"Pneumonia": "85%"},
+        {"Covid": "25%"}
+    ];
+
+    // Convert the list to a JSON string
+    const diseasesJSON = JSON.stringify(diseases);
+
+    // Append diseases parameter to the URL
+    window.location.href = '/possible_diseases?diseases=' + encodeURIComponent(diseasesJSON);
+}
+
+// Call the loading function when search is clicked
+document.querySelector('.search-button').addEventListener('click', simulateLoading);
+
+</script>
+
+</body>
+</html>

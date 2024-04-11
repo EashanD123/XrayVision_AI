@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XrayVision AI</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif; /* Font fallbacks */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden; /* Prevent scrollbars */
+        background-image: url('../static/background.png');
+        background-repeat: no-repeat; /* Prevent the background image from repeating */
+        background-size: 100%; /* Scale the background image to 80% of its original size */
+        background-position: center; /* Center the background image */
+    }
+
+    nav {
+        background-color: #06003C;
+        padding: 20px 0;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        z-index: 1000; /* Ensure the navigation bar is above other content */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    nav ul li {
+        margin: 0 10px;
+        font-size: 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+       background-color: #0B006D;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 800px;
+        text-align: center;
+        margin-top: 120px;
+    }
+    .disease {
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">AI Detections</a></li>
+    </ul>
+</nav>
+
+<div class="container" id="diseasesContainer">
+</div>
+
+<script>
+        // Retrieve the value of the "diseases" query parameter from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const diseasesJSON = urlParams.get('diseases');
+
+    // Parse the JSON string to get the list of diseases and percentages
+    const diseases = JSON.parse(decodeURIComponent(diseasesJSON));
+
+
+    // Display the diseases and percentages on the page
+    const diseasesContainer = document.getElementById('diseasesContainer');
+    diseases.forEach(disease => {
+        const diseaseName = Object.keys(disease)[0];
+        const percentage = disease[diseaseName];
+        const diseaseElement = document.createElement('div');
+        diseaseElement.classList.add('disease');
+        diseaseElement.textContent = `${diseaseName}: ${percentage}`;
+        diseasesContainer.appendChild(diseaseElement);
+    });
+</script>
+
+</body>
+</html>
