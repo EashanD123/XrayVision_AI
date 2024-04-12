@@ -28,6 +28,7 @@
         top: 0;
         z-index: 1000; /* Ensure the navigation bar is above other content */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+        height: 3.25vh;
     }
 
     nav ul {
@@ -521,15 +522,16 @@ function simulateLoading() {
 
     // Construct the list of diseases and percentages
     const diseases = [
-        {"Pneumonia": "85%"},
-        {"Covid": "25%"}
+        {"Pneumonia": "90%"},
+        {"Covid": "20%"}
     ];
 
-    // Convert the list to a JSON string
-    const diseasesJSON = JSON.stringify(diseases);
+    // Convert the list to a query string
+    const params = new URLSearchParams();
+    params.append('diseases', JSON.stringify(diseases));
 
     // Append diseases parameter to the URL
-    window.location.href = '/possible_diseases?diseases=' + encodeURIComponent(diseasesJSON);
+    window.location.href = '/possible_diseases?' + params.toString();
 }
 
 // Call the loading function when search is clicked

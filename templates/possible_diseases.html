@@ -10,7 +10,8 @@
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: center;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
         width: 100vw;
         height: 100vh;
         overflow: hidden; /* Prevent scrollbars */
@@ -28,6 +29,7 @@
         top: 0;
         z-index: 1000; /* Ensure the navigation bar is above other content */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+        height: 3.25vh;
     }
 
     nav ul {
@@ -55,15 +57,67 @@
        background-color: #0B006D;
     }
 
-    .container {
-        width: 100%;
-        max-width: 800px;
+    .white-background {
+        width: 60%;
+        height: 70vh;
         text-align: center;
-        margin-top: 120px;
+        background-color: white; /* Add white background */
+        padding: 20px; /* Add padding for spacing */
+        border-radius: 10px; /* Add border radius for rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+        display: flex;
+        flex-direction: column;
+
     }
+
     .disease {
-        margin-bottom: 10px;
+    margin-bottom: 10px;
+    font-family: Arial, Helvetica, sans-serif; /* Apply the font style */
+    font-size: 16px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the font bold */
+    color: black; /* Set font color to black */
+    border: 4px solid black; /* Increase border thickness */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    padding: 15px 20px; /* Add padding for spacing */
+    width: 100%; /* Set width to 100% */
+    box-sizing: border-box; /* Include padding and border in the width */
+    flex: 1
+}
+
+
+    #bodyContainer {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        flex-direction: column; /* Arrange children vertically */
+        width: 100vw;
+        height: 90.291%;
+        margin-top: 4%;
     }
+
+    #cont1 {
+    display: flex;
+    align-items: center; /* Center vertically */
+    flex-direction: column; /* Arrange children vertically */
+    height: 60vh;
+    width: 100%; /* Ensure the container takes up the full width */
+}
+
+
+    #cont2 {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    border: 1px solid red;
+    height: 7.5vh;
+    width: 100%; /* Set width to 100% to fill the parent container */
+    border-radius: 12.5px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -76,26 +130,44 @@
     </ul>
 </nav>
 
-<div class="container" id="diseasesContainer">
+<div id="bodyContainer">
+    <div class="white-background">
+        <div id="cont1">
+            <div id="diseasesContainer"></div>
+        </div>
+        <div id="cont2">
+            <h2> Number of Possible Diseases Based off Symptoms:  </h1>
+        </div>
+    </div>
 </div>
 
 <script>
-        // Retrieve the value of the "diseases" query parameter from the URL
+    // Retrieve the value of the "diseases" query parameter from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const diseasesJSON = urlParams.get('diseases');
 
     // Parse the JSON string to get the list of diseases and percentages
-    const diseases = JSON.parse(decodeURIComponent(diseasesJSON));
-
+    const diseases = JSON.parse(diseasesJSON);
 
     // Display the diseases and percentages on the page
     const diseasesContainer = document.getElementById('diseasesContainer');
     diseases.forEach(disease => {
         const diseaseName = Object.keys(disease)[0];
-        const percentage = disease[diseaseName];
+        const percentage = parseInt(disease[diseaseName]); // Parse the percentage as integer
         const diseaseElement = document.createElement('div');
         diseaseElement.classList.add('disease');
-        diseaseElement.textContent = `${diseaseName}: ${percentage}`;
+        diseaseElement.textContent = `${diseaseName}: ${percentage}%`;
+
+        // Adjust background color based on the percentage
+        if (percentage >= 80) {
+            diseaseElement.style.backgroundColor = 'green';
+        } else if (percentage >= 35) {
+            diseaseElement.style.backgroundColor = 'yellow';
+        } else {
+            diseaseElement.style.backgroundColor = 'red';
+        }
+        
+        diseaseElement.style.width = '850px';
         diseasesContainer.appendChild(diseaseElement);
     });
 </script>
