@@ -67,6 +67,7 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
         display: flex;
         flex-direction: column;
+        border: 2px black solid;
 
     }
 
@@ -81,9 +82,21 @@
     padding: 15px 20px; /* Add padding for spacing */
     width: 100%; /* Set width to 100% */
     box-sizing: border-box; /* Include padding and border in the width */
-    flex: 1
+    flex: 1;
 }
 
+    /* Adjusting background colors */
+    .disease.green {
+    background-color: lightgreen; /* Lighter green */
+    }
+
+    .disease.yellow {
+        background-color: #FFFD8C; /* Lighter yellow */
+    }
+
+    .disease.red {
+        background-color: #FF6F6F; /* Lighter red */
+    }
 
     #bodyContainer {
         display: flex;
@@ -103,20 +116,26 @@
     width: 100%; /* Ensure the container takes up the full width */
 }
 
-
     #cont2 {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    border: 1px solid black;
-    height: 7.5vh;
-    width: 100%; /* Set width to 100% to fill the parent container */
-    border-radius: 12.5px;
-    margin-top: 20px;
-    text-align: center;
-}
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        border: 1px solid black;
+        height: 7.5vh;
+        width: 95%; /* Set width to 100% to fill the parent container */
+        border-radius: 12.5px;
+        margin-top: 20px;
+        text-align: center;
+        margin-left: 2.5%;
+    }
 
-
+    #countTextDiv {
+        height: 100%;
+        width: 90%;
+        border: 1px black solid;
+        flex: 1;
+        
+    }
 
 </style>
 </head>
@@ -136,7 +155,13 @@
             <div id="diseasesContainer"></div>
         </div>
         <div id="cont2">
-            <h2> Number of Possible Diseases Based off Symptoms:  </h1>
+            <div id="countTextDiv">
+                <h2 id="symptomCountText"> Potential Diseases Based off Symptoms: <span id="symptomCount"></span> </h2>
+            </div>
+            <div>
+                Home
+            </div>
+
         </div>
     </div>
 </div>
@@ -160,16 +185,24 @@
 
         // Adjust background color based on the percentage
         if (percentage >= 80) {
-            diseaseElement.style.backgroundColor = 'green';
+            diseaseElement.classList.add('green');
         } else if (percentage >= 35) {
-            diseaseElement.style.backgroundColor = 'yellow';
+            diseaseElement.classList.add('yellow');
         } else {
-            diseaseElement.style.backgroundColor = 'red';
+            diseaseElement.classList.add('red');
         }
-        
-        diseaseElement.style.width = '850px';
+
+        diseaseElement.style.width = '875px';
         diseasesContainer.appendChild(diseaseElement);
     });
+
+    // Count the number of symptoms
+    const symptomCount = diseases.reduce((acc, disease) => acc + Object.keys(disease).length, 0);
+
+    // Update the text to include the count
+    const symptomCountElement = document.getElementById('symptomCount');
+    symptomCountElement.textContent = symptomCount;
+
 </script>
 
 </body>

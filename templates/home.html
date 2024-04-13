@@ -520,18 +520,22 @@ function simulateLoading() {
     const loadingScreen = document.getElementById('loadingScreen');
     loadingScreen.style.display = 'block';
 
-    // Construct the list of diseases and percentages
-    const diseases = [
-        {"Pneumonia": "90%"},
-        {"Covid": "20%"}
-    ];
+    // Add a 2.5-second delay before redirecting
+    setTimeout(() => {
+        // Construct the list of diseases and percentages
+        const diseases = [
+            {"Pneumonia": "90%"},
+            {"Tuberculosis ": "50%"},
+            {"Covid": "20%"}
+        ];
 
-    // Convert the list to a query string
-    const params = new URLSearchParams();
-    params.append('diseases', JSON.stringify(diseases));
+        // Convert the list to a query string
+        const params = new URLSearchParams();
+        params.append('diseases', JSON.stringify(diseases));
 
-    // Append diseases parameter to the URL
-    window.location.href = '/possible_diseases?' + params.toString();
+        // Append diseases parameter to the URL
+        window.location.href = '/possible_diseases?' + params.toString();
+    }, 2000);
 }
 
 // Call the loading function when search is clicked
