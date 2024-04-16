@@ -131,10 +131,19 @@
 
     #countTextDiv {
         height: 100%;
-        width: 90%;
-        border: 1px black solid;
-        flex: 1;
-        
+        width: 92.5%;
+        display: flex; /* Enable flexbox */
+        justify-content: center; /* Center items horizontally */
+        align-items: center; /* Center items vertically */
+    }
+
+    #homeTextDiv {
+        height: 100%;
+        width: 7.5%;
+        display: flex; /* Enable flexbox */
+        justify-content: center; /* Center items horizontally */
+        align-items: center; /* Center items vertically */
+        border-left: 1px black solid; /* Only a 1px black border on the left side */
     }
 
 </style>
@@ -158,8 +167,8 @@
             <div id="countTextDiv">
                 <h2 id="symptomCountText"> Potential Diseases Based off Symptoms: <span id="symptomCount"></span> </h2>
             </div>
-            <div>
-                Home
+            <div id="homeTextDiv">
+                <h1> 🏠 </h1>
             </div>
 
         </div>
@@ -167,6 +176,10 @@
 </div>
 
 <script>
+    document.getElementById("homeTextDiv").addEventListener("click", function() {
+        window.location.href = "home.html"; // Redirect to home.html
+    });
+
     // Retrieve the value of the "diseases" query parameter from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const diseasesJSON = urlParams.get('diseases');
