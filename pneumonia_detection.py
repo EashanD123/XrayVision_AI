@@ -11,9 +11,10 @@ val_dir = 'content/chest-xray-pneumonia/chest_xray/val'
 test_dir = 'content/chest-xray-pneumonia/chest_xray/test'
 
 # Define data generators
-train_datagen = ImageDataGenerator(rescale=1./255)
-val_datagen = ImageDataGenerator(rescale=1./255)
-test_datagen = ImageDataGenerator(rescale=1./255)
+train_datagen = ImageDataGenerator(rescale=1. / 255)
+val_datagen = ImageDataGenerator(rescale=1. / 255)
+test_datagen = ImageDataGenerator(rescale=1. / 255)
+
 
 def bar_plot(dir):
     x = len(os.listdir(os.path.join(dir, 'NORMAL')))
@@ -25,10 +26,12 @@ def bar_plot(dir):
     plt.title('Plot of number of values for each category')
     plt.show()
 
+
 print('Training images:\n')
 print('NORMAL:', len(os.listdir(os.path.join(train_dir, 'NORMAL'))))
 print('PNEUMONIA:', len(os.listdir(os.path.join(train_dir, 'PNEUMONIA'))))
-print('Total Training images:', len(os.listdir(os.path.join(train_dir, 'NORMAL'))) + len(os.listdir(os.path.join(train_dir, 'PNEUMONIA'))))
+print('Total Training images:',
+      len(os.listdir(os.path.join(train_dir, 'NORMAL'))) + len(os.listdir(os.path.join(train_dir, 'PNEUMONIA'))))
 print('*' * 49)
 bar_plot(train_dir)
 
@@ -74,32 +77,37 @@ model = Sequential([
     BatchNormalization(),
     Dense(2, activation='sigmoid')
 ])
-
+#model = tf.keras.models.load_model('pneumonia_model.keras')
 # Compile model
 model.compile(
     loss='binary_crossentropy',
     optimizer='adam',
     metrics=['accuracy'])
 
-# Train model
-history = model.fit(
-    train_generator,
-    epochs=5,
-    validation_data=val_generator)
+#Train model
+#history = model.fit(
+   # train_generator,
+  #  epochs=25,
+ #   validation_data=val_generator)
+
+#model.save('pneumonia_model2.keras')
 
 # Evaluate model on test data
 loss, accuracy = model.evaluate(test_generator)
 print('The accuracy of the model on test dataset is', accuracy * 100)
+
 
 # Perform inference on individual images
 def predict_image(image_path):
     img = tf.keras.utils.load_img(image_path, target_size=(256, 256))
     img_array = tf.keras.utils.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)
-    result = model.predict(img_array)
+    load_model = tf.keras.models.load_model('pneumonia_model.keras')
+    result = load_model.predict(img_array)
     class_index = tf.argmax(result, axis=1).numpy()[0]
     classes = ['NORMAL', 'PNEUMONIA']
     print('Predicted class:', classes[class_index])
+
 
 # Example usage
 predict_image("content/chest-xray-pneumonia/chest_xray/test/NORMAL/IM-0001-0001.jpeg")
