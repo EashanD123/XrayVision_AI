@@ -72,18 +72,18 @@
     }
 
     .disease {
-    margin-bottom: 10px;
-    font-family: Arial, Helvetica, sans-serif; /* Apply the font style */
-    font-size: 16px; /* Adjust font size as needed */
-    font-weight: bold; /* Make the font bold */
-    color: black; /* Set font color to black */
-    border: 4px solid black; /* Increase border thickness */
-    border-radius: 5px; /* Add border radius for rounded corners */
-    padding: 15px 20px; /* Add padding for spacing */
-    width: 100%; /* Set width to 100% */
-    box-sizing: border-box; /* Include padding and border in the width */
-    flex: 1;
-}
+        margin-bottom: 10px;
+        font-family: Arial, Helvetica, sans-serif; /* Apply the font style */
+        font-size: 16px; /* Adjust font size as needed */
+        font-weight: bold; /* Make the font bold */
+        color: black; /* Set font color to black */
+        border: 4px solid black; /* Increase border thickness */
+        border-radius: 5px; /* Add border radius for rounded corners */
+        padding: 15px 20px; /* Add padding for spacing */
+        width: 100%; /* Set width to 100% */
+        box-sizing: border-box; /* Include padding and border in the width */
+        flex: 1;
+    }
 
     /* Adjusting background colors */
     .disease.green {
@@ -154,7 +154,6 @@
     <ul>
         <li><a href="#">Home</a></li>
         <li><a href="#">About</a></li>
-        <li><a href="#">AI Detections</a></li>
     </ul>
 </nav>
 
@@ -170,14 +169,17 @@
             <div id="homeTextDiv">
                 <h1> 🏠 </h1>
             </div>
-
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById("homeTextDiv").addEventListener("click", function() {
-        window.location.href = "home.html"; // Redirect to home.html
+   document.getElementById("homeTextDiv").addEventListener("click", function() {
+        window.location.href = "/"; // Redirect to home.html
+    });
+
+    document.getElementById("diseasesContainer").addEventListener("click", function() {
+        window.location.href = "/test_disease"; // Redirect to home.html
     });
 
     // Retrieve the value of the "diseases" query parameter from the URL
