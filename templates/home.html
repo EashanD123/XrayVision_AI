@@ -421,6 +421,13 @@
     "Wheezing",
     "Yellowing of Skin"
 ];
+const diseaseSymptoms = {
+    "Pneumonia": ["Cough", "Fever", "Chest Pain", "Shortness of Breath", "Fatigue", "Sweating", "Shivering", "Loss of Appetite"],
+    "Tuberculosis": ["Persistent Cough", "Weight Loss", "Fever", "Night Sweats", "Fatigue", "Chest Pain", "Loss of Appetite"],
+    "COVID": ["Cough", "Fever", "Shortness of Breath", "Fatigue", "Loss of Smell", "Loss of Taste", "Headache", "Sore Throat"]
+};
+
+
 
     function showSuggestions() {
     const searchBox = document.getElementById('searchBox');
@@ -510,7 +517,7 @@ function deleteSymptom(symptom) {
 function searchSymptom() {
     const searchBox = document.getElementById('searchBox');
     const searchTerm = searchBox.value.toLowerCase();
-    addToSelected(searchTerm);
+    //addToSelected(searchTerm);
     // Perform search or other actions here
     console.log("Searching for symptom:", searchTerm);
 }
@@ -519,26 +526,52 @@ function simulateLoading() {
     const loadingScreen = document.getElementById('loadingScreen');
     loadingScreen.style.display = 'block';
 
-    // Add a 2.5-second delay before redirecting
     setTimeout(() => {
-        // Construct the list of diseases and percentages
-        const diseases = [
-            {"Pneumonia": "90%"},
-            {"Tuberculosis ": "50%"},
-            {"Covid": "20%"}
-        ];
-
-        // Convert the list to a query string
+        const diseases = calculateDiseasePercentages();
+        console.log("diseases")
         const params = new URLSearchParams();
         params.append('diseases', JSON.stringify(diseases));
 
-        // Append diseases parameter to the URL
+        // Navigate to the next page with the parameters
         window.location.href = '/possible_diseases?' + params.toString();
     }, 2000);
 }
 
-// Call the loading function when search is clicked
+function calculateDiseasePercentages() {
+    const selectedSymptoms = Array.from(document.querySelectorAll('#symptomList li')).map(li => li.textContent.trim());
+    const modifiedSymptoms = selectedSymptoms.map(symptom => symptom.slice(0, -1));
+    console.log("selectedSymptoms: " + selectedSymptoms)
+    console.log("modifiedSymptoms: " + modifiedSymptoms)
+
+    const diseasePercentages = [];
+
+    for (const [disease, diseaseSymptomList] of Object.entries(diseaseSymptoms)) {
+        const matchedSymptoms = modifiedSymptoms.filter(symptom => diseaseSymptomList.includes(symptom));
+        const percentage = (matchedSymptoms.length / diseaseSymptomList.length) * 100;
+
+        diseasePercentages.push({ [disease]: percentage.toFixed(2) + '%' });
+    }
+
+    console.log("diseasePercentages: " + diseasePercentages)
+    return diseasePercentages;
+}
+
+<!--function calculateDiseasePercentages(suggestSymptoms) {-->
+<!--    const diseasePercentages = [];-->
+
+<!--    for (const [disease, diseaseSymptomList] of Object.entries(diseaseSymptoms)) {-->
+<!--        const matchedSymptoms = suggestSymptoms.filter(symptom => diseaseSymptomList.includes(symptom));-->
+<!--        const percentage = (matchedSymptoms.length / diseaseSymptomList.length) * 100;-->
+<!--        diseasePercentages.push({ [disease]: `${percentage.toFixed(2)}%` });-->
+<!--    }-->
+
+<!--    return diseasePercentages;-->
+<!--}-->
+
 document.querySelector('.search-button').addEventListener('click', simulateLoading);
+
+// Add event listener for symptom search
+document.getElementById('searchBox').addEventListener('input', showSuggestions);
 
 </script>
 

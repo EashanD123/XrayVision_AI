@@ -98,6 +98,32 @@
         background-color: #FF6F6F; /* Lighter red */
     }
 
+    .disease-button {
+        margin-bottom: 10px;
+        font-family: Arial, Helvetica, sans-serif; /* Apply the font style */
+        font-size: 16px; /* Adjust font size as needed */
+        font-weight: bold; /* Make the font bold */
+        color: black; /* Set font color to black */
+        border: 4px solid black; /* Increase border thickness */
+        border-radius: 5px; /* Add border radius for rounded corners */
+        padding: 15px 20px; /* Add padding for spacing */
+        width: 100%; /* Set width to 100% */
+        box-sizing: border-box; /* Include padding and border in the width */
+        cursor: pointer;
+        text-align: center;
+    }
+
+    /* Colors for disease buttons */
+    .green {
+        background-color: lightgreen;
+    }
+    .yellow {
+        background-color: #FFFD8C;
+    }
+    .red {
+        background-color: #FF6F6F;
+    }
+
     #bodyContainer {
         display: flex;
         justify-content: center; /* Center horizontally */
@@ -174,12 +200,8 @@
 </div>
 
 <script>
-   document.getElementById("homeTextDiv").addEventListener("click", function() {
+    document.getElementById("homeTextDiv").addEventListener("click", function() {
         window.location.href = "/"; // Redirect to home.html
-    });
-
-    document.getElementById("diseasesContainer").addEventListener("click", function() {
-        window.location.href = "/test_disease"; // Redirect to home.html
     });
 
     // Retrieve the value of the "diseases" query parameter from the URL
@@ -189,30 +211,51 @@
     // Parse the JSON string to get the list of diseases and percentages
     const diseases = JSON.parse(diseasesJSON);
 
-    // Display the diseases and percentages on the page
+    // Function to create and append a button
+    function createDiseaseButton(diseaseName, percentage, colorClass) {
+        const button = document.createElement('button');
+        button.classList.add('disease-button', colorClass);
+        button.textContent = `${diseaseName}: ${percentage}%`;
+        button.style.width = '875px';
+        button.addEventListener('click', function() {
+            let link = '';
+            // Map disease names to specific links
+            if (diseaseName === 'Pneumonia') {
+                link = '/test_disease1';
+            } else if (diseaseName === 'Tuberculosis') {
+                link = '/test_disease2';
+            } else if (diseaseName === 'COVID') {
+                link = '/test_disease3';
+            } else {
+                link = `/test_disease?disease=${diseaseName}`; // Default case
+            }
+            window.location.href = link; // Redirect to the specific disease page
+        });
+        return button;
+    }
+
+    // Display the diseases and percentages as buttons
     const diseasesContainer = document.getElementById('diseasesContainer');
     diseases.forEach(disease => {
         const diseaseName = Object.keys(disease)[0];
         const percentage = parseInt(disease[diseaseName]); // Parse the percentage as integer
-        const diseaseElement = document.createElement('div');
-        diseaseElement.classList.add('disease');
-        diseaseElement.textContent = `${diseaseName}: ${percentage}%`;
+        let colorClass = '';
 
-        // Adjust background color based on the percentage
+        // Assign color based on percentage
         if (percentage >= 80) {
-            diseaseElement.classList.add('green');
+            colorClass = 'green';
         } else if (percentage >= 35) {
-            diseaseElement.classList.add('yellow');
+            colorClass = 'yellow';
         } else {
-            diseaseElement.classList.add('red');
+            colorClass = 'red';
         }
 
-        diseaseElement.style.width = '875px';
-        diseasesContainer.appendChild(diseaseElement);
+        const button = createDiseaseButton(diseaseName, percentage, colorClass);
+        diseasesContainer.appendChild(button); // Append the button to the diseasesContainer
     });
 
     // Count the number of symptoms
-    const symptomCount = diseases.reduce((acc, disease) => acc + Object.keys(disease).length, 0);
+    const symptomCount = diseases.length;
 
     // Update the text to include the count
     const symptomCountElement = document.getElementById('symptomCount');

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XrayVision AI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('../static/background.png');
+            background-repeat: no-repeat;
+            background-size: 100%;
+            background-position: center;
+        }
+
+        #white-background {
+            display: flex;
+            width: 90%;
+            height: 90%;
+            background-color: transparent;
+            border-radius: 15px;
+            border: 5px solid black;
+            padding: 0.5%;
+            align-items: center;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .drag-area {
+            border: 2px dashed #fff;
+            height: 99.5%;
+            width: 700px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .drag-area.active {
+            border: 2px solid #fff;
+        }
+
+        .drag-area .icon {
+            font-size: 100px;
+            color: #fff;
+        }
+
+        .drag-area header {
+            font-size: 30px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .drag-area span {
+            font-size: 25px;
+            font-weight: 500;
+            color: #fff;
+            margin: 10px 0 15px 0;
+        }
+
+        .button-container {
+            display: none;
+            flex-direction: row;
+        }
+
+        .button-container button {
+            padding: 10px 25px;
+            font-size: 20px;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            background: #fff;
+            color: #5256ad;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            width: 375px;
+        }
+
+        .drag-area button {
+            padding: 10px 25px;
+            font-size: 20px;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            background: #fff;
+            color: #5256ad;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .drag-area img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        #buttonView {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            transform: translateY(-55px) translateX(5px);
+        }
+
+        #left-side {
+            height: 100%;
+            width: 53.25%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #right-side {
+            height: 99%;
+            display: flex;
+            width: 46.75%;
+            align-items: center;
+            border: 2px white solid;
+            margin-left: 10px;
+            margin-bottom: 5px;
+            border-radius: 15px;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        /* HTML: <div class="loader"></div> */
+        .loader {
+          width: 60px;
+          margin-left: 190px;
+          aspect-ratio: 4;
+          background: radial-gradient(circle closest-side,#000 90%,#0000) 0/calc(100%/3) 100% space;
+          clip-path: inset(0 100% 0 0);
+          animation: l1 1s steps(4) infinite;
+        }
+        @keyframes l1 {to{clip-path: inset(0 -34% 0 0)}}
+    </style>
+</head>
+<body>
+    <div id="white-background">
+        <div id="left-side">
+            <div class="drag-area">
+                <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <header>Drag & Drop to Upload File</header>
+                <span>OR</span>
+                <button>Browse File</button>
+                <input type="file" hidden>
+            </div>
+            <div id="buttonView" class="button-container">
+                <button style="display:none;"> Browse File</button>
+                <button style="display:none;"> Drag and Drop </button>
+            </div>
+        </div>
+        <div id="right-side">
+            <button id="runTest" style="
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;">
+                Run Disease Detection
+            </button>
+            <div id="waitingTime" style="display: none; margin-top: 20px; text-align: center;">
+                <div class="loader"></div>
+            <h2 style="margin-top: 20px;"> Approximate Waiting Time: 2 minutes </h2>
+            </div>
+            <h2 id="results1" style="display: none;"> Results: The Patient Has Pneumonia </h2>
+            <div id="results2" style="display: none; border-radius: 25px; border: 1px black solid; margin-top: 10px; padding: 10px; background-color: #4CAF50">
+                <h2 id="results2_0"> Accuracy: 91.339% </h2>
+            </div>
+            <div id="results3" style="display: none; border-radius: 15px; border: 1px black solid; margin-top: 40px; padding: 10px; background-color: #CBC3E3; width: 400px; justify-content: center; align-items: center">
+                <h2 style="text-align: center"> Input Data Into Dataset </h2>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        //selecting all required elements
+        const dropArea = document.querySelector(".drag-area"),
+            dragText = dropArea.querySelector("header"),
+            button = dropArea.querySelector("button"),
+            input = dropArea.querySelector("input");
+        let file; //this is a global variable and we'll use it inside multiple functions
+        let base64Url;
+
+        button.onclick = () => {
+            input.click(); //if user click on the button then the input also clicked
+        }
+
+        input.addEventListener("change", function () {
+            //getting user select file and [0] this means if user select multiple files then we'll select only the first one
+            file = this.files[0];
+            dropArea.classList.add("active");
+            showFile(); //calling function
+        });
+
+        //If user Drag File Over DropArea
+        dropArea.addEventListener("dragover", (event) => {
+            event.preventDefault(); //preventing from default behaviour
+            dropArea.classList.add("active");
+            dragText.textContent = "Release to Upload File";
+        });
+
+        //If user leave dragged File from DropArea
+        dropArea.addEventListener("dragleave", () => {
+            dropArea.classList.remove("active");
+            dragText.textContent = "Drag & Drop to Upload File";
+        });
+
+        //If user drop File on DropArea
+        dropArea.addEventListener("drop", (event) => {
+            event.preventDefault(); //preventing from default behaviour
+            //getting user select file and [0] this means if user select multiple files then we'll select only the first one
+            file = event.dataTransfer.files[0];
+            showFile(); //calling function
+        });
+
+        function showFile() {
+            let fileType = file.type; //getting selected file type
+            let validExtensions = ["image/jpeg", "image/jpg", "image/png"]; //adding some valid image extensions in array
+            if (validExtensions.includes(fileType)) { //if user selected file is an image file
+                let fileReader = new FileReader(); //creating new FileReader object
+                fileReader.onload = () => {
+                    let fileURL = fileReader.result; //passing user file source in fileURL variable
+                    base64Url = fileURL.replace("data:", "").replace(/^.+,/, "");
+                    // Create image tag
+                    let image = document.createElement('img');
+                    image.src = fileURL;
+                    image.alt = 'image';
+
+                    // Append image to dropArea
+                    dropArea.innerHTML = '';
+                    dropArea.appendChild(image);
+
+                    // Show button view
+                    document.getElementById('buttonView').style.display = 'flex';
+                    document.getElementById('runTest').style.display = 'flex';
+
+                    // Append buttons to button view container
+                    let buttonContainer = document.getElementById('buttonView');
+                    buttonContainer.innerHTML = `
+                        <button> Browse File</button>
+                        <button> Drag and Drop </button>
+                    `;
+
+                    // Decrease the height of the drag area by 10%
+                    dropArea.style.height = "89.5%"; // Adjusted height
+                    // Add margin-bottom to the drag view
+                    dropArea.style.marginBottom = "70px"; // Adjusted margin bottom
+                    // Change justify content of the white-background
+                    document.getElementById('white-background').style.justifyContent = "none";
+                };
+                fileReader.readAsDataURL(file);
+            } else {
+                alert("This is not an Image File!");
+                dropArea.classList.remove("active");
+                dragText.textContent = "Drag & Drop to Upload File";
+            }
+        }
+
+        // Select the button
+        const runTestButton = document.getElementById("runTest");
+        // Select the waiting time div
+        const waitingTimeDiv = document.getElementById("waitingTime");
+        const theResults1 = document.getElementById("results1");
+        const theResults2 = document.getElementById("results2");
+        const theResults3 = document.getElementById("results3");
+
+        // Add click event listener to the button
+        runTestButton.addEventListener("click", function() {
+            // Show the waiting time div when button is clicked
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ disease: "turbuculosis", test_image: base64Url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('results1').innerText = 'Prediction: ' + data.prediction.result;
+                document.getElementById('results2_0').innerText = 'Accuracy: ' + (data.prediction.accuracy * 100).toFixed(2) + '%';
+            });
+
+            waitingTimeDiv.style.display = "block";
+            runTestButton.style.display = "none";
+
+            // Set a timeout to hide the waiting time after 1 minute and 45 seconds (1900 seconds)
+            setTimeout(function() {
+                // Hide the waiting time div
+                waitingTimeDiv.style.display = "none";
+                // Display the results
+                theResults1.style.display = "flex"; // Changed from "block" to "flex"
+                theResults2.style.display = "flex";
+                theResults3.style.display = "flex";
+                // Hide the button
+                runTestButton.style.display = "none";
+            }, 15000); // 190000 milliseconds for 1900 seconds
+        });
+
+        document.getElementById("results3").addEventListener("click", function() {
+            window.location.href = "/";
+        });
+
+
+    </script>
+</body>
+</html>
