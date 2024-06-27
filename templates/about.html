@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XrayVision AI</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif; /* Font fallbacks */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden; /* Prevent scrollbars */
+        background-image: url('../static/background.png');
+        background-repeat: no-repeat; /* Prevent the background image from repeating */
+        background-size: 100%; /* Scale the background image to 80% of its original size */
+        background-position: center; /* Center the background image */
+    }
+
+    nav {
+        background-color: #06003C;
+        padding: 20px 0;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        height: 3.25vh;
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    nav ul li {
+        margin: 0 10px;
+        font-size: 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+        background-color: #0B006D;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 800px;
+        text-align: center;
+        margin-top: 100px;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        height: 45vh;
+        transform: translate(0, 25%);
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: #06003C;
+    }
+
+    p {
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .team {
+        margin-top: 40px;
+    }
+
+    .team-member {
+        margin-bottom: 20px;
+    }
+
+    .team-member h3 {
+        margin: 10px 0 5px;
+        color: #06003C;
+    }
+
+    .team-member p {
+        margin: 0;
+    }
+</style>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="{{ url_for('welcome') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1>About XrayVision AI</h1>
+    <p>Welcome to XrayVision AI, where we leverage advanced artificial intelligence technology to assist medical professionals in diagnosing diseases through symptoms analysis. Our mission is to provide a comprehensive, user-friendly tool that helps in identifying potential health issues quickly and accurately.</p>
+
+    <h2>Our Mission</h2>
+    <p>At XrayVision AI, our mission is to empower healthcare providers with cutting-edge AI technology, enhancing their ability to deliver timely and precise diagnoses. We strive to bridge the gap between technology and healthcare, ensuring better outcomes for patients worldwide.</p>
+
+<!--    <h2>Our Team</h2>-->
+<!--    <div class="team">-->
+<!--        <div class="team-member">-->
+<!--            <h3>Dr. Jane Doe</h3>-->
+<!--            <p>Founder & CEO</p>-->
+<!--            <p>Dr. Jane Doe is a renowned medical expert with over 20 years of experience in the field of diagnostics. Her vision and leadership drive XrayVision AI's mission to revolutionize healthcare through technology.</p>-->
+<!--        </div>-->
+<!--        <div class="team-member">-->
+<!--            <h3>John Smith</h3>-->
+<!--            <p>Chief Technology Officer</p>-->
+<!--            <p>John Smith is a tech enthusiast with a passion for AI and machine learning. With a background in computer science, he leads our technical team in developing state-of-the-art AI solutions.</p>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+
+</body>
+</html>

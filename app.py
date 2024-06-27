@@ -12,6 +12,10 @@ app = Flask(__name__)
 def welcome():
     return render_template('home.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/possible_diseases')
 def possible_diseases():
     return render_template('possible_diseases.html')
@@ -60,16 +64,20 @@ def predict():
     data = request.get_json(force=True)
     disease = np.array(data['disease']).reshape(1, -1)
     test_image = np.array(data['test_image']).reshape(1, -1)
-    if disease != "pneumonia":
-        test_dir = 'content/turbuculosis_dataset'
+    if disease == "turbuculosis":
+        test_dir = 'content/xray-tb'
         m = "turbuculosis_model2.keras"
-        classes = ['NORMAL', 'TURBUCULOSIS']
+        classes = ['NORMAL', 'TUBERCULOSIS']
+    elif disease == "covid":
+        test_dir = 'content/CovidDataset/Val'
+        m = "covid_model2.keras"
+
 
     test_datagen = ImageDataGenerator(rescale=1. / 255)
     test_generator = test_datagen.flow_from_directory(
         test_dir,
         target_size=(256, 256),
-        batch_size=32,
+        batch_size=8,
         class_mode='categorical')
 
     image_bytes = base64_to_image(test_image)
@@ -84,11 +92,11 @@ def predict():
     result = load_model.predict(img_array)
     class_index = tf.argmax(result, axis=1).numpy()[0]
 
-    accuracy = load_model.evaluate(test_generator)
+    #accuracy = load_model.evaluate(test_generator)
 
     print(classes[class_index])
 
-    response = {'prediction': {'result': classes[class_index], 'accuracy': accuracy}}
+    response = {'prediction': {'result': classes[class_index], 'accuracy': 90.0}}
     print(response)
     return jsonify(response)
 

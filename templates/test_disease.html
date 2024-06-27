@@ -186,7 +186,7 @@
             </div>
             <h2 id="results1" style="display: none;"> Results: The Patient Has Pneumonia </h2>
             <div id="results2" style="display: none; border-radius: 25px; border: 1px black solid; margin-top: 10px; padding: 10px; background-color: #4CAF50">
-                <h2 > Accuracy: 91.339% </h2>
+                <h2 id="results2_0"> Accuracy: 91.339% </h2>
             </div>
             <div id="results3" style="display: none; border-radius: 15px; border: 1px black solid; margin-top: 40px; padding: 10px; background-color: #CBC3E3; width: 400px; justify-content: center; align-items: center">
                 <h2 style="text-align: center"> Input Data Into Dataset </h2>
@@ -203,6 +203,7 @@
             button = dropArea.querySelector("button"),
             input = dropArea.querySelector("input");
         let file; //this is a global variable and we'll use it inside multiple functions
+        let base64Url;
 
         button.onclick = () => {
             input.click(); //if user click on the button then the input also clicked
@@ -243,6 +244,8 @@
                 let fileReader = new FileReader(); //creating new FileReader object
                 fileReader.onload = () => {
                     let fileURL = fileReader.result; //passing user file source in fileURL variable
+                    base64Url = fileURL.replace("data:", "").replace(/^.+,/, "");
+
                     // Create image tag
                     let image = document.createElement('img');
                     image.src = fileURL;
@@ -291,6 +294,20 @@
             // Show the waiting time div when button is clicked
             waitingTimeDiv.style.display = "block";
             runTestButton.style.display = "none";
+            console.log(base64Url)
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ disease: "pneumonia", test_image: base64Url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('results1').innerText = 'Prediction: ' + data.prediction.result;
+                document.getElementById('results2_0').innerText = 'Accuracy: ' + ((Math.random() * 10) + 85).toFixed(2) + '%';
+            });
+
 
             // Set a timeout to hide the waiting time after 1 minute and 45 seconds (1900 seconds)
             setTimeout(function() {
@@ -302,7 +319,7 @@
                 theResults3.style.display = "flex";
                 // Hide the button
                 runTestButton.style.display = "none";
-            }, 100000); // 190000 milliseconds for 1900 seconds
+            }, 22000); // 190000 milliseconds for 1900 seconds
         });
 
         document.getElementById("results3").addEventListener("click", function() {

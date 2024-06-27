@@ -227,8 +227,8 @@
 
 <nav>
     <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
+        <li><a href="{{ url_for('welcome') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
     </ul>
 </nav>
 
@@ -280,7 +280,6 @@
     "Cough",
     "Depression",
     "Diarrhea",
-    "Difficulty Breathing",
     "Difficulty Speaking",
     "Double Vision",
     "Drooling",
@@ -419,15 +418,21 @@
     "Weight Gain",
     "Weight Loss",
     "Wheezing",
-    "Yellowing of Skin"
+    "Yellowing of Skin",
+    "Persistent Cough",
+    "Coughing Blood",
+    "Difficulty Breathing"
 ];
 const diseaseSymptoms = {
     "Pneumonia": ["Cough", "Fever", "Chest Pain", "Shortness of Breath", "Fatigue", "Sweating", "Shivering", "Loss of Appetite"],
-    "Tuberculosis": ["Persistent Cough", "Weight Loss", "Fever", "Night Sweats", "Fatigue", "Chest Pain", "Loss of Appetite"],
-    "COVID": ["Cough", "Fever", "Shortness of Breath", "Fatigue", "Loss of Smell", "Loss of Taste", "Headache", "Sore Throat"]
+    "Tuberculosis": ["Persistent Cough", "Weight Loss", "Fever", "Night Sweats", "Fatigue", "Chest Pain", "Loss of Appetite", "Chest Tightness", "Chills", "Coughing Blood", "Difficulty Breathing"],
+    "COVID": ["Cough", "Fever", "Shortness of Breath", "Fatigue", "Loss of Smell", "Loss of Taste", "Headache", "Sore Throat"],
+    "Pulmonary Embolism": ["Sudden shortness of breath", "Sharp chest pain", "Bloody cough", "Rapid heartbeat", "Dizziness", "Sweating", "Leg swelling", "Cyanosis", "Anxiety"],
+    "Multiple Sclerosis": ["Fatigue", "Numbness", "Limb weakness", "Unsteady walking", "Vision problems", "Muscle spasms", "Dizziness", "Bladder issues", "Cognitive issues", "Pain"],
+    "Brain Cancer": ["Severe headaches", "Seizures", "Nausea", "Vision issues", "Loss of sensation/movement", "Balance issues", "Speech difficulties", "Confusion", "Behavior changes", "Hearing problems"],
+    "Lung Cancer": ["Persistent cough", "Coughing Blood", "Shortness of breath", "Chest pain", "Hoarseness", "Weight loss", "Bone pain", "Headache", "Fatigue", "Recurring infections"],
+    "Thyroid Cancer": ["Neck lump", "Neck pain", "Hoarseness", "Difficulty swallowing", "Difficulty Breathing", "Persistent cough", "Swollen neck lymph nodes", "Weight loss", "Fatigue", "Neck fullness"]
 };
-
-
 
     function showSuggestions() {
     const searchBox = document.getElementById('searchBox');

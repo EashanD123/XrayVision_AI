@@ -136,10 +136,12 @@
 
     #cont1 {
     display: flex;
-    align-items: center; /* Center vertically */
-    flex-direction: column; /* Arrange children vertically */
+    align-items: center;
+    flex-direction: column;
     height: 60vh;
-    width: 100%; /* Ensure the container takes up the full width */
+    width: 100%;
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 60vh; /* Limit maximum height for scroll */
 }
 
     #cont2 {
@@ -171,6 +173,20 @@
         align-items: center; /* Center items vertically */
         border-left: 1px black solid; /* Only a 1px black border on the left side */
     }
+
+    .white-background {
+    width: 60%;
+    height: 70vh;
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    border: 2px black solid;
+    overflow: hidden; /* Ensure no overflow */
+}
 
 </style>
 </head>
@@ -219,6 +235,7 @@
         button.style.width = '875px';
         button.addEventListener('click', function() {
             let link = '';
+            let v = false
             // Map disease names to specific links
             if (diseaseName === 'Pneumonia') {
                 link = '/test_disease1';
@@ -228,8 +245,11 @@
                 link = '/test_disease3';
             } else {
                 link = `/test_disease?disease=${diseaseName}`; // Default case
+                v = true
             }
-            window.location.href = link; // Redirect to the specific disease page
+            if (v != true) {
+                window.location.href = link; // Redirect to the specific disease page
+            }
         });
         return button;
     }

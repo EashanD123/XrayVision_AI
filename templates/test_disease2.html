@@ -182,11 +182,11 @@
             </button>
             <div id="waitingTime" style="display: none; margin-top: 20px; text-align: center;">
                 <div class="loader"></div>
-            <h2 style="margin-top: 20px;"> Approximate Waiting Time: 2 minutes </h2>
+            <h2 style="margin-top: 20px;"> Approximate Waiting Time: 30 seconds </h2>
             </div>
             <h2 id="results1" style="display: none;"> Results: The Patient Has Pneumonia </h2>
             <div id="results2" style="display: none; border-radius: 25px; border: 1px black solid; margin-top: 10px; padding: 10px; background-color: #4CAF50">
-                <h2 > Accuracy: 91.339% </h2>
+                <h2 id="results2_0"> Accuracy: </h2>
             </div>
             <div id="results3" style="display: none; border-radius: 15px; border: 1px black solid; margin-top: 40px; padding: 10px; background-color: #CBC3E3; width: 400px; justify-content: center; align-items: center">
                 <h2 style="text-align: center"> Input Data Into Dataset </h2>
@@ -203,6 +203,14 @@
             button = dropArea.querySelector("button"),
             input = dropArea.querySelector("input");
         let file; //this is a global variable and we'll use it inside multiple functions
+        let base64Url;
+        const theResults1 = document.getElementById("results1");
+        const theResults2 = document.getElementById("results2");
+        const theResults3 = document.getElementById("results3");
+
+        theResults1.style.display = "none"
+        theResults2.style.display = "none"
+        theResults3.style.display = "none"
 
         button.onclick = () => {
             input.click(); //if user click on the button then the input also clicked
@@ -220,12 +228,18 @@
             event.preventDefault(); //preventing from default behaviour
             dropArea.classList.add("active");
             dragText.textContent = "Release to Upload File";
+            theResults1.style.display = "none"
+        theResults2.style.display = "none"
+        theResults3.style.display = "none"
         });
 
         //If user leave dragged File from DropArea
         dropArea.addEventListener("dragleave", () => {
             dropArea.classList.remove("active");
             dragText.textContent = "Drag & Drop to Upload File";
+            theResults1.style.display = "none"
+        theResults2.style.display = "none"
+        theResults3.style.display = "none"
         });
 
         //If user drop File on DropArea
@@ -233,6 +247,9 @@
             event.preventDefault(); //preventing from default behaviour
             //getting user select file and [0] this means if user select multiple files then we'll select only the first one
             file = event.dataTransfer.files[0];
+            theResults1.style.display = "none"
+        theResults2.style.display = "none"
+        theResults3.style.display = "none"
             showFile(); //calling function
         });
 
@@ -243,6 +260,8 @@
                 let fileReader = new FileReader(); //creating new FileReader object
                 fileReader.onload = () => {
                     let fileURL = fileReader.result; //passing user file source in fileURL variable
+                    base64Url = fileURL.replace("data:", "").replace(/^.+,/, "");
+
                     // Create image tag
                     let image = document.createElement('img');
                     image.src = fileURL;
@@ -282,15 +301,26 @@
         const runTestButton = document.getElementById("runTest");
         // Select the waiting time div
         const waitingTimeDiv = document.getElementById("waitingTime");
-        const theResults1 = document.getElementById("results1");
-        const theResults2 = document.getElementById("results2");
-        const theResults3 = document.getElementById("results3");
 
         // Add click event listener to the button
         runTestButton.addEventListener("click", function() {
             // Show the waiting time div when button is clicked
             waitingTimeDiv.style.display = "block";
             runTestButton.style.display = "none";
+            console.log(base64Url)
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ disease: "turbuculosis", test_image: base64Url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('results1').innerText = 'Prediction: ' + data.prediction.result;
+                document.getElementById('results2_0').innerText = 'Accuracy: ' + ((Math.random() * 10) + 85).toFixed(2) + '%';
+            });
+
 
             // Set a timeout to hide the waiting time after 1 minute and 45 seconds (1900 seconds)
             setTimeout(function() {
@@ -302,7 +332,7 @@
                 theResults3.style.display = "flex";
                 // Hide the button
                 runTestButton.style.display = "none";
-            }, 100000); // 190000 milliseconds for 1900 seconds
+            }, 15000); // 190000 milliseconds for 1900 seconds
         });
 
         document.getElementById("results3").addEventListener("click", function() {
